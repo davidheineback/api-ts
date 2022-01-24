@@ -4,7 +4,10 @@
   "description": "api that is to be submitted as part of api design assignment in course 1dv027",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node -r dotenv/config dist/server.js",
+    "start:dev": "nodemon -r dotenv/config src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -w -p ."
   },
   "author": "David Heinebäck",
   "license": "ISC",
