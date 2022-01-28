@@ -1,4 +1,4 @@
-// import { connectDB } from './config/mongoose';
+import { connectDB } from './config/mongoose';
 import { errorMiddleware } from './middlewares/error-middleware';
 import express, { Application } from 'express'
 import helmet from 'helmet'
@@ -9,7 +9,7 @@ import { router } from './routes/router';
 
 
 const main = async () => {
-  // await connectDB()
+  await connectDB()
   const app: Application = express()
 
   // Security
