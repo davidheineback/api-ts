@@ -1,5 +1,5 @@
 import createError from 'http-errors'
-import { UserModel } from '../../models/UserInterface'
+import { UserModel } from '../../models/UserModel'
 import * as globalMethod from './method-controller'
 
 /**
