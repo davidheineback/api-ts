@@ -1,7 +1,7 @@
 import mongoose, { Connection } from 'mongoose'
 
 const connectDB = () => new Promise((resolve, reject) => {
-  mongoose.connect(`${process.env.DB_CONNECTION_STRING_TEST}`)
+  mongoose.connect(`${process.env.DB_CONNECTION_STRING}`)
 
   const dbConnection: Connection = mongoose.connection
 
