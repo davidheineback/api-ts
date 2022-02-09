@@ -1,22 +1,31 @@
 
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
+import { Request, Response, NextFunction } from 'express'
 
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, ACCESS_TOKEN_LIFE, REFRESH_TOKEN_LIFE } = process.env
 
-
-/**
- * Filter product data before sending as response.
- *
- * @param {object} rawProduct - An object representing a product.
- * @returns {object} - A filtered object representing a product.
- */
-export function escapeOutput (rawProduct) {
-  return {
-    name: rawProduct.name,
-    description: rawProduct.description,
-    detailedDescription: rawProduct.detailedDescription,
-  }
+export type Payload = {
+  sub: string
 }
+
+ export function createToken (payload: Payload, secret: string, life: string) {
+  return (jwt.sign(payload, secret, {
+    algorithm: 'HS256',
+    expiresIn: life
+  }))
+}
+
+ export function getAccessToken (payload: Payload) {
+  return createToken(payload, ACCESS_TOKEN_SECRET!, ACCESS_TOKEN_SECRET!)
+}
+
+export function getAccessAndRefreshToken (payload: Payload) {
+  const access_token = createToken(payload, ACCESS_TOKEN_SECRET!, ACCESS_TOKEN_LIFE!)
+  const refresh_token = createToken(payload, REFRESH_TOKEN_SECRET!, REFRESH_TOKEN_LIFE!)
+  return { access_token, refresh_token }
+}
+
 
 
 /**
@@ -49,7 +58,7 @@ export function accessCheckCall (req, user) {
  */
 function refreshCall (req, user) {
   if (user.refreshToken === req.refresh_token) {
-    const newToken = jwt.verify(req.refresh_token, process.env.REFRESH_TOKEN_SECRET,
+    const newToken = jwt.verify(req.refresh_token, REFRESH_TOKEN_SECRET!,
       (error, user) => {
         if (error) {
           return createError(403)
@@ -67,28 +76,16 @@ function refreshCall (req, user) {
   }
 }
 
-/**
- * Signs a jwt accesstoken.
- *
- * @param {object} payload - a payload to sign in jwt accesstoken
- * @returns {*} - A signed jwt accesstoken.
- */
-export function getAccessToken (payload) {
-  return (jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    algorithm: 'HS256',
-    expiresIn: process.env.ACCESS_TOKEN_LIFE
-  }))
-}
-
-/**
- * Signs a jwt refresh token.
- *
- * @param {object} payload - a payload to sign in jwt refreshtoken
- * @returns {*} - A signed jwt accesstoken.
- */
-export function getRefreshToken (payload) {
-  return (jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    algorithm: 'HS256',
-    expiresIn: process.env.REFRESH_TOKEN_LIFE
-  }))
-}
+// /**
+//  * Filter product data before sending as response.
+//  *
+//  * @param {object} rawProduct - An object representing a product.
+//  * @returns {object} - A filtered object representing a product.
+//  */
+// export function escapeOutput (rawProduct: {name: string, description: string, detailedDescription: string}) {
+//   return {
+//     name: rawProduct.name,
+//     description: rawProduct.description,
+//     detailedDescription: rawProduct.detailedDescription,
+//   }
+// }
