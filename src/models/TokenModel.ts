@@ -3,21 +3,21 @@ import { UserModel } from './UserModel';
 
 export interface TokenInterface {
   user: string,
-  refreshToken: Schema.Types.ObjectId
+  refreshToken: string
 }
 
 const TokenSchema: Schema<TokenInterface> = new Schema (
   {
    user: {
       type: String,
-      required: [true, 'user is required'],
+      required: [true, 'User is required.'],
       lowercase: true,
       trim: true
     },
     refreshToken: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: UserModel,
-      required: true,
+      required: [true, 'Token is required.']
 
     }
   },
