@@ -6,13 +6,13 @@ export async function addUser(user: UserInterface): Promise<UserInterface> {
   return saveUser
 }
 
-export async function getUserByEmail(email: string) {
-  const user = await UserModel.findOne({ email })
+export async function getUserByEmail(username: string) {
+  const user = await UserModel.findOne({ username })
   return user
 }
 
-export async function authorizeUser(email: string, password: string) {
-  const user = await getUserByEmail(email)
+export async function authorizeUser(username: string, password: string) {
+  const user = await getUserByEmail(username)
   if (user) {
     const authorized = await user.checkPassword(password)
     if (authorized) {
