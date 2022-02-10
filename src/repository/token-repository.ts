@@ -14,8 +14,8 @@ export async function deleteToken(refreshToken: string) {
   return await TokenModel.findOneAndDelete({ refreshToken })
 }
 
-export async function getTokenByEmail(user: string) {
-  const token = await TokenModel.findOne({ user })
-  return user
+export async function getTokenByEmail(username: string) {
+  const token = await TokenModel.findOne({ username })
+  return token?.refreshToken
 }
 
