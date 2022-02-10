@@ -10,8 +10,18 @@ import { setToken } from '../../repository/token-repository'
  */
 export class TokenController {
 
-index () {
+index (req: Request, res: Response, next: NextFunction) {
   console.log('Hello!')
+  const self =  `${req.protocol}://${req.get('host')}${req.originalUrl}`
+  const paths = 
+{
+  self,
+  register: `${self}/register`,
+  login: `${self}/login`,
+  logout: `${self}/logout`
+}
+
+  res.json({ message: 'Authentication operations:', links: paths })
 }
 
   /**
@@ -26,13 +36,13 @@ index () {
       const user = await addUser({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email,
+        username: req.body.username,
         password: req.body.password
       })
 
       res
         .status(201)
-        .json({ id: user.email })
+        .json({ id: user.username })
     } catch (error: any) {
       let err = error
 
@@ -61,13 +71,13 @@ index () {
     try {
       const user = await authorizeUser(req.body.email, req.body.password)
       const payload = {
-        sub: user.email
+        sub: user.username
       }
 
       const tokens = getAccessAndRefreshToken(payload)
 
       const refreshToken: TokenInterface = {
-        user: user.email,
+        user: user.username,
         refreshToken: tokens.refresh_token
       }
 
