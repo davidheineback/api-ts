@@ -5,7 +5,7 @@ import validator from 'validator';
 export interface UserInterface {
   firstName: string
   lastName: string
-  email: string
+  username: string
   password: string
 }
 
@@ -27,9 +27,9 @@ const UserSchema: Schema<UserDocumentInterface> = new Schema (
       trim: true,
       lowercase: true,
     },
-    email: {
+    username: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, 'username is required'],
       unique: true,
       lowercase: true,
       trim: true,
