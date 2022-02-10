@@ -8,9 +8,10 @@ export const router = express.Router()
 const tokenController = new TokenController()
 
 // Get routes::
-router.route('/').get(tokenController.authenticateToken)
+router.route('/').get(tokenController.index)
 
 
 // Post routes::
-router.route('/admin/login').post(tokenController.login)
-router.route('/admin/logout').post(tokenController.logout)
+router.route('/register').post(tokenController.register)
+// router.route('/login').post(tokenController.login)
+// router.route('/logout').post(tokenController.logout)
