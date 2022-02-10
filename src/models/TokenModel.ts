@@ -2,13 +2,13 @@ import mongoose, { Schema } from 'mongoose'
 import { UserModel } from './UserModel';
 
 export interface TokenInterface {
-  user: string,
+  username: string,
   refreshToken: string
 }
 
 const TokenSchema: Schema<TokenInterface> = new Schema (
   {
-   user: {
+   username: {
       type: String,
       required: [true, 'User is required.'],
       lowercase: true,
