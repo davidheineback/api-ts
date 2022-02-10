@@ -56,6 +56,7 @@ UserSchema.pre('save', async function preSave (this: UserDocumentInterface, next
 
 UserSchema.methods.checkPassword = async function (password: string) {
   const compare = await bcrypt.compare(password, this.password)
+  return compare
 }
 
 export const UserModel = mongoose.model<UserDocumentInterface>('User', UserSchema)
