@@ -13,5 +13,5 @@ router.route('/').get(tokenController.index)
 
 // Post routes::
 router.route('/register').post(tokenController.register)
-// router.route('/login').post(tokenController.login)
-// router.route('/logout').post(tokenController.logout)
+router.route('/login').post(tokenController.login)
+router.route('/logout').post(tokenController.logout)
