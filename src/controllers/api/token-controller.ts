@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 import { getAccessAndRefreshToken } from './method-controller'
 import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
-import { setToken } from '../../repository/token-repository'
+import { setToken, deleteToken, getTokenByEmail } from '../../repository/token-repository'
 
 /**
  * Encapsulates a controller.
@@ -24,20 +24,17 @@ index (req: Request, res: Response, next: NextFunction) {
   res.json({ message: 'Authentication operations:', links: paths })
 }
 
-  /**
-   * Registers a user.
-   *
-   * @param {object} req - Express request object.
-   * @param {object} res - Express response object.
-   * @param {Function} next - Express next middleware function.
-   */
+
   async register (req: Request, res: Response, next: NextFunction) {
+
+   const {firstName, lastName, username, password} = req.body
+
     try {
       const user = await addUser({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        username: req.body.username,
-        password: req.body.password
+        firstName,
+        lastName,
+        username,
+        password
       })
 
       res
@@ -60,16 +57,10 @@ index (req: Request, res: Response, next: NextFunction) {
   }
 
 
-  /**
-   * Authenticates a user.
-   *
-   * @param {object} req - Express request object.
-   * @param {object} res - Express response object.
-   * @param {Function} next - Express next middleware function.
-   */
   async login (req: Request, res: Response, next: NextFunction) {
+    const { username, password } = req.body
     try {
-      const user = await authorizeUser(req.body.email, req.body.password)
+      const user = await authorizeUser(username, password)
       const payload = {
         sub: user.username
       }
@@ -77,7 +68,7 @@ index (req: Request, res: Response, next: NextFunction) {
       const tokens = getAccessAndRefreshToken(payload)
 
       const refreshToken: TokenInterface = {
-        user: user.username,
+        username: user.username,
         refreshToken: tokens.refresh_token
       }
 
@@ -99,22 +90,17 @@ index (req: Request, res: Response, next: NextFunction) {
     }
   }
 
-  // /**
-  //  * Logout a user.
-  //  *
-  //  * @param {object} req - Express request object.
-  //  * @param {object} res - Express response object.
-  //  * @param {Function} next - Express next middleware function.
-  //  * @returns {status} - Returns a status representing the logout proccess
-  //  */
-  // async logout (req, res, next) {
-  //   try {
-  //     await UserModel.logout(req.body.user)
-  //     res.sendStatus(204)
-  //   } catch (error) {
-  //     next(error)
-  //   }
-  // }
+
+  async logout (req: Request, res: Response, next: NextFunction) {
+    const { username } = req.body
+    try {
+      const token = await getTokenByEmail(username)
+      token && await deleteToken(token)
+      res.sendStatus(204)
+    } catch (error) {
+      next(error)
+    }
+  }
 
   // /**
   //  * Authorize the user by validating the token.
