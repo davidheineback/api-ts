@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
-import { getAccessAndRefreshToken } from './method-controller'
+import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken } from './method-controller'
 import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
 import { setToken, deleteToken, getTokenByEmail } from '../../repository/token-repository'
@@ -92,14 +92,43 @@ index (req: Request, res: Response, next: NextFunction) {
 
 
   async logout (req: Request, res: Response, next: NextFunction) {
-    const { username } = req.body
+    const authorization = req.headers.authorization?.split(' ')
     try {
-      const token = await getTokenByEmail(username)
-      token && await deleteToken(token)
+      if (authorization![0] === 'Bearer') {
+        const token = authorization![1]
+        token && await deleteToken(token)
+        res.sendStatus(204)
+      } else {
+        throw new Error('Invalid Authentication')
+      }
+      
+    } catch (error) {
+      const err = createError(401)
+      err.innerException = error
+      next(err)
+    }
+  }
+
+  refresh(req: Request, res: Response, next: NextFunction) {
+    const authorization = req.headers.authorization?.split(' ')
+    try {
+      verifyRefreshToken(authorization![1])
       res.sendStatus(204)
     } catch (error) {
       next(error)
     }
+
+  }
+
+  access(req: Request, res: Response, next: NextFunction) {
+    const authorization = req.headers.authorization?.split(' ')
+    try {
+      verifyAccessToken(authorization![1])
+      res.sendStatus(204)
+    } catch (error) {
+      next(error)
+    }
+
   }
 
   // /**

@@ -26,55 +26,80 @@ export function getAccessAndRefreshToken (payload: Payload) {
   return { access_token, refresh_token }
 }
 
-
-
-/**
- * Handles refreshtoken.
- *
- * @param {object} req - represents request object.
- * @param {object} user - represents request object.
- * @returns {string} - A string with a token || a Error.
- */
-export function accessCheckCall (req, user) {
-  jwt.verify(req.body.access_token, req.secret,
+export function verifyRefreshToken(token: string) {
+  jwt.verify(token, REFRESH_TOKEN_SECRET!,
     (error) => {
       if (error) {
         if (error.message.includes('expired')) {
-          req.body.access_token = refreshCall(req.body, user)
+          return createError(401)
         } else {
           return createError(403)
         }
       }
     })
-  return req.body.access_token
 }
 
-/**
- * Handles refreshtoken.
- *
- * @param {object} req - represents request object.
- * @param {object} user - represents request object.
- * @returns {status} - Returns a status.
- */
-function refreshCall (req, user) {
-  if (user.refreshToken === req.refresh_token) {
-    const newToken = jwt.verify(req.refresh_token, REFRESH_TOKEN_SECRET!,
-      (error, user) => {
-        if (error) {
+export function verifyAccessToken(token: string) {
+  jwt.verify(token, ACCESS_TOKEN_SECRET!,
+    (error) => {
+      if (error) {
+        if (error.message.includes('expired')) {
+          return createError(401)
+        } else {
           return createError(403)
         }
-        const payload = {
-          sub: user.username,
-          isAdmin: user.isAdmin
-        }
-        const token = getAccessToken(payload)
-        return token
-      })
-    return newToken
-  } else {
-    return createError(401)
-  }
+      }
+    })
 }
+
+
+// /**
+//  * Handles accesstoken.
+//  *
+//  * @param {object} req - represents request object.
+//  * @param {object} user - represents request object.
+//  * @returns {string} - A string with a token || a Error.
+//  */
+// export function accessCheckCall (req, user) {
+//   jwt.verify(req.body.access_token, req.secret,
+//     (error) => {
+//       if (error) {
+//         if (error.message.includes('expired')) {
+//           req.body.access_token = refreshCall(req.body, user)
+//         } else {
+//           return createError(403)
+//         }
+//       }
+//     })
+//   return req.body.access_token
+// }
+
+// /**
+//  * Handles refreshtoken.
+//  *
+//  * @param {object} req - represents request object.
+//  * @param {object} user - represents request object.
+//  * @returns {status} - Returns a status.
+//  */
+// function refreshCall (req, user) {
+//   if (user.refreshToken === req.refresh_token) {
+//     const newToken = jwt.verify(req.refresh_token, REFRESH_TOKEN_SECRET!,
+//       (error, user) => {
+//         if (error) {
+//           return createError(403)
+//         }
+//         const payload = {
+//           sub: user.username,
+//           isAdmin: user.isAdmin
+//         }
+//         const token = getAccessToken(payload)
+//         return token
+//       })
+//     return newToken
+//   } else {
+//     return createError(401)
+//   }
+// }
 
 // /**
 //  * Filter product data before sending as response.
