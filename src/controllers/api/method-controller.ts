@@ -31,9 +31,10 @@ export function verifyRefreshToken(token: string) {
     (error) => {
       if (error) {
         if (error.message.includes('expired')) {
-          return createError(401)
+          throw new Error('Refresh token expired')
         } else {
-          return createError(403)
+          throw new Error('Refresh token invalid')
+          // return createError(403)
         }
       }
     })
@@ -42,11 +43,13 @@ export function verifyRefreshToken(token: string) {
 export function verifyAccessToken(token: string) {
   jwt.verify(token, ACCESS_TOKEN_SECRET!,
     (error) => {
+      console.log('in error')
       if (error) {
         if (error.message.includes('expired')) {
-          return createError(401)
+          throw new Error('Access token expired')
         } else {
-          return createError(403)
+          // return createError(403)
+          throw new Error('Access token invalid')
         }
       }
     })

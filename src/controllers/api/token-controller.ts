@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken } from './method-controller'
 import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
-import { setToken, deleteToken, getTokenByEmail } from '../../repository/token-repository'
+import { setToken, deleteToken, getTokenByEmail, getRefreshToken } from '../../repository/token-repository'
 
 /**
  * Encapsulates a controller.
@@ -92,10 +92,9 @@ index (req: Request, res: Response, next: NextFunction) {
 
 
   async logout (req: Request, res: Response, next: NextFunction) {
-    const authorization = req.headers.authorization?.split(' ')
+    const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     try {
-      if (authorization![0] === 'Bearer') {
-        const token = authorization![1]
+      if (Bearer === 'Bearer') {
         token && await deleteToken(token)
         res.sendStatus(204)
       } else {
@@ -109,26 +108,43 @@ index (req: Request, res: Response, next: NextFunction) {
     }
   }
 
-  refresh(req: Request, res: Response, next: NextFunction) {
-    const authorization = req.headers.authorization?.split(' ')
-    try {
-      verifyRefreshToken(authorization![1])
-      res.sendStatus(204)
-    } catch (error) {
+  async refresh(req: Request, res: Response, next: NextFunction) {
+    const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
+    if (Bearer === 'Bearer') {
+      try {
+        const refreshToken = await getRefreshToken(token)
+        if (refreshToken) {
+          verifyRefreshToken(token)
+          res.sendStatus(204)
+        } else {
+          next(createError(401))
+        }
+        
+      } catch (error) {
+        const err = createError(401)
+        err.innerException = error
+        next(error)
+      }
+    } else {
+      const error = createError(401)
       next(error)
     }
+ 
 
   }
 
   access(req: Request, res: Response, next: NextFunction) {
-    const authorization = req.headers.authorization?.split(' ')
-    try {
-      verifyAccessToken(authorization![1])
-      res.sendStatus(204)
-    } catch (error) {
-      next(error)
+    const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
+    if (Bearer === 'Bearer') {
+      try {
+        verifyAccessToken(token)
+        res.sendStatus(204)
+      } catch (error) {
+        const err = createError(401)
+        err.innerException = error
+        next(err)
+      }
     }
-
   }
 
   // /**
