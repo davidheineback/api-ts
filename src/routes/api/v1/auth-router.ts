@@ -9,7 +9,8 @@ const tokenController = new TokenController()
 
 // Get routes::
 router.route('/').get(tokenController.index)
-
+router.route('/refresh').get(tokenController.refresh)
+router.route('/access').get(tokenController.access)
 
 // Post routes::
 router.route('/register').post(tokenController.register)
