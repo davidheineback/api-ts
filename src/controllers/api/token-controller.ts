@@ -14,11 +14,10 @@ export class TokenController {
 index (req: Request, res: Response, next: NextFunction) {
   console.log('Hello!')
   const self =  `${req.protocol}://${req.get('host')}${req.originalUrl}`
-  console.log
-  const linkSelection: Links = {
-    register: true,
-    login: true
-  }
+    const linkSelection: Links = {
+      register: true,
+      login: true,
+    }
 
 const paths = getAssociatedLinks(self, linkSelection)
 console.log(paths)
