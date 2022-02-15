@@ -6,11 +6,7 @@ export interface ItemInterface {
   item: string
   images: Array<string>,
   descrition: string,
-  initialPrice: number,
-  currentPrice: number
-  highestBidder: UserInterface,
-  expires: Date
-  payed: boolean
+  activeAuction: boolean
 }
 
 const ItemSchema: Schema<ItemInterface> = new Schema (
@@ -23,12 +19,7 @@ const ItemSchema: Schema<ItemInterface> = new Schema (
     },
     item: {},
     images: {},
-    descrition: {},
-    initialPrice: {},
-    currentPrice: {},
-    highestBidder:  {},
-    expires:  {},
-    payed: {},
+    descrition: {}
   },
   {
     timestamps: true,
