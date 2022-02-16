@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
-import { getAssociatedLinks, Links } from '../../helpers/hateoas'
+import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
 
 /**
  * Encapsulates a controller.
@@ -9,8 +9,11 @@ export class ItemController {
 
 index (req: Request, res: Response, next: NextFunction) {
   console.log(req.params)
-  console.log('Hello from Auction index')
-  const self =  `${req.protocol}://${req.get('host')}${req.originalUrl}`
+  console.log('Hello from Item index')
+  const self: Self = {
+    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+    method: req.method
+  } 
     const linkSelection: Links = {
       register: true,
       login: true,

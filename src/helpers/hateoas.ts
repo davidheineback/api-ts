@@ -5,6 +5,11 @@ export type Links = {
   logout?: boolean
 }
 
+export type Self = {
+  url: string
+  method: string
+}
+
 
 
 function setUpLinks(self: string) {
@@ -55,6 +60,6 @@ return links
 }
 
 
-export function getAssociatedLinks (self: string, linkSelection: Links) {
-  return setUpLinks(self).filter(link => Object.keys(linkSelection).includes(link.name) && (linkSelection as any)[link.name])
+export function getAssociatedLinks (self: Self, linkSelection: Links) {
+  return setUpLinks(self.url).filter(link => Object.keys(linkSelection).includes(link.name) && (linkSelection as any)[link.name])
 }

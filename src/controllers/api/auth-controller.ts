@@ -4,7 +4,7 @@ import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken, getAcc
 import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
 import { setToken, deleteToken, getTokenByEmail, getRefreshToken } from '../../repository/token-repository'
-import { getAssociatedLinks, Links } from '../../helpers/hateoas'
+import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
 
 /**
  * Encapsulates a controller.
@@ -13,7 +13,11 @@ export class AuthController {
 
 index (req: Request, res: Response, next: NextFunction) {
   console.log('Hello!')
-  const self =  `${req.protocol}://${req.get('host')}${req.originalUrl}`
+
+  const self: Self =  {
+    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+    method: req.method
+  } 
     const linkSelection: Links = {
       register: true,
       login: true,
