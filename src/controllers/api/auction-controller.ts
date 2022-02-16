@@ -1,9 +1,5 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
-import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken } from './method-controller'
-import { addUser, authorizeUser } from '../../repository/user-repository'
-import { TokenInterface } from '../../models/TokenModel'
-import { setToken, deleteToken, getTokenByEmail, getRefreshToken } from '../../repository/token-repository'
 import { getAssociatedLinks, Links } from '../../helpers/hateoas'
 
 /**

@@ -1,18 +1,18 @@
 import express from 'express'
 
-import { TokenController } from '../../../controllers/api/token-controller'
+import { AuthController } from '../../../controllers/api/auth-controller'
 
 // add router::
 export const router = express.Router()
 
-const tokenController = new TokenController()
+const authController = new AuthController()
 
 // Get routes::
-router.route('/').get(tokenController.index)
-router.route('/refresh').get(tokenController.refresh)
-router.route('/access').get(tokenController.access)
+router.route('/').get(authController.index)
+router.route('/refresh').get(authController.refresh)
 
 // Post routes::
-router.route('/register').post(tokenController.register)
-router.route('/login').post(tokenController.login)
-router.route('/logout').post(tokenController.logout)
+router.route('/register').post(authController.register)
+router.route('/login').post(authController.login)
+router.route('/logout').delete(authController.logout)
+
