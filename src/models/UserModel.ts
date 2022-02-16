@@ -17,28 +17,28 @@ const UserSchema: Schema<UserDocumentInterface> = new Schema (
   {
     firstName: {
       type: String,
-      required: [true, 'Firstname is required'],
+      required: [true, 'Firstname is required.'],
       trim: true,
       lowercase: true,
     },
     lastName: {
       type: String,
-      required: [true, 'Lastname is required'],
+      required: [true, 'Lastname is required.'],
       trim: true,
       lowercase: true,
     },
     username: {
       type: String,
-      required: [true, 'username is required'],
+      required: [true, 'username is required.'],
       unique: true,
       lowercase: true,
       trim: true,
-      validate: [validator.isEmail, '{VALUE} is not a valid email']
+      validate: [validator.isEmail, '{VALUE} is not a valid email.']
     },
     password: {
       type: String,
-      minlength: [10, 'Password must be at least 10 characters long'],
-      required: [true, 'Password is required']
+      minlength: [10, 'Password must be at least 10 characters long.'],
+      required: [true, 'Password is required.']
     }
   },
   {

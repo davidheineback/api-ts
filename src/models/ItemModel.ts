@@ -3,7 +3,7 @@ import { UserInterface, UserModel } from './UserModel';
 
 export interface ItemInterface {
   owner: UserInterface,
-  item: string
+  name: string
   images: Array<string>,
   descrition: string,
   activeAuction: boolean
@@ -17,9 +17,18 @@ const ItemSchema: Schema<ItemInterface> = new Schema (
       lowercase: true,
       trim: true
     },
-    item: {},
-    images: {},
-    descrition: {}
+    name: {
+      type: String,
+      required: [true, 'Name is required.']
+    },
+    images: {
+      type: [],
+      default: []
+    },
+    descrition: {
+      type: String,
+      required: [true, 'Description is required.']
+    }
   },
   {
     timestamps: true,
