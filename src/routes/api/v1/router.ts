@@ -1,6 +1,7 @@
 import express from 'express'
 import { router as authRouter } from './auth-router'
 import { router as auctionRouter } from './auction-router'
+import { router as itemRouter } from './item-router'
 import { Request, Response, NextFunction } from 'express'
 
 export const router = express.Router()
@@ -16,5 +17,6 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 })
 
 router.use('/auth', authRouter)
+router.use('/item', itemRouter)
 router.use('/auction', auctionRouter)
 
