@@ -3,6 +3,7 @@ export type Links = {
   register?: boolean,
   login?: boolean,
   logout?: boolean
+  addItem?: boolean
 }
 
 export type Self = {
@@ -54,7 +55,20 @@ function setUpLinks(self: string) {
       username: 'string',
       refresh_token: 'string',
     }
+  },
+  {
+    name: 'add-item',
+    method: 'POST',
+    link: `${self}/item`,
+    description: 'Create a new item.',
+    bodyTemplate: {
+      name: 'string',
+      images: 'Array<img-src>',
+      description: 'string'
+    }
   }
+  
+
 ]
 return links
 }
