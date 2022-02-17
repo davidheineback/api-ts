@@ -11,6 +11,7 @@ export async function getUserByEmail(username: string) {
   return user
 }
 
+
 export async function authorizeUser(username: string, password: string) {
   const user = await getUserByEmail(username)
   if (user) {

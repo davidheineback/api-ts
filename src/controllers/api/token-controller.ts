@@ -31,8 +31,8 @@ export function verifyRefreshToken(token: string) {
     } catch (error: any) {
           throw createError(401, 
             `${error.message.includes('expired') ?
-            'Access token expired': 
-            'Access token invalid'
+            'Refresh token expired': 
+            'Refresh token invalid'
           }`)
     }
 }

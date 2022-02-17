@@ -31,7 +31,7 @@ async createItem(req: Request, res: Response, next: NextFunction) {
   const {user, name, images, description} = req.body
 
   const owner = await getUserByEmail(user)
-
+  console.log(owner)
   try {
     if (owner) {
       const item = await addItem({
@@ -42,7 +42,7 @@ async createItem(req: Request, res: Response, next: NextFunction) {
       })
       res
       .status(201)
-      .json({ id: item })
+      .json({ item })
     } else {
       throw new Error('Invalid User.')
     }
@@ -50,6 +50,7 @@ async createItem(req: Request, res: Response, next: NextFunction) {
 
 
   } catch (error: any) {
+    console.log(error)
     let err = error
 
     if (err.code === 11000) {
