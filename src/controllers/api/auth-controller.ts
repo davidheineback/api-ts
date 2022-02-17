@@ -1,4 +1,5 @@
 import createError from 'http-errors'
+import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken, getAccessToken } from './token-controller'
 import { addUser, authorizeUser } from '../../repository/user-repository'
@@ -121,7 +122,8 @@ console.log(paths)
         const refreshToken = await getRefreshToken(token)
         if (refreshToken) {
           verifyRefreshToken(token)
-          const payload = { sub: 'username' }
+          req.body.user = jwt.decode(token)?.sub
+          const payload = { sub: req.body.user }
           const newAccessToken = getAccessToken(payload)
           res
           .status(200)
@@ -152,12 +154,15 @@ console.log(paths)
     if (Bearer === 'Bearer') {
       try {
         verifyAccessToken(token)
+        req.body.user = jwt.decode(token)?.sub
+        console.log(req.body.user)
         next()
       } catch (error) {
-        const err = createError(401)
-        err.innerException = error
-        next(err)
+        next(error)
       }
+    } else {
+      const error = createError(401)
+      next(error)
     }
   }
 
