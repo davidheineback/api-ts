@@ -26,31 +26,26 @@ export function getAccessAndRefreshToken (payload: Payload) {
 }
 
 export function verifyRefreshToken(token: string) {
-  jwt.verify(token, REFRESH_TOKEN_SECRET!,
-    (error) => {
-      if (error) {
-        if (error.message.includes('expired')) {
-          throw new Error('Refresh token expired')
-        } else {
-          throw new Error('Refresh token invalid')
-          // return createError(403)
-        }
-      }
-    })
+    try {
+      jwt.verify(token, REFRESH_TOKEN_SECRET!!)
+    } catch (error: any) {
+          throw createError(401, 
+            `${error.message.includes('expired') ?
+            'Access token expired': 
+            'Access token invalid'
+          }`)
+    }
 }
 
 export function verifyAccessToken(token: string) {
-  jwt.verify(token, ACCESS_TOKEN_SECRET!,
-    (error) => {
-      console.log('in error')
-      if (error) {
-        if (error.message.includes('expired')) {
-          throw new Error('Access token expired')
-        } else {
-          // return createError(403)
-          throw new Error('Access token invalid')
-        }
-      }
-    })
+  try {
+    jwt.verify(token, ACCESS_TOKEN_SECRET!)
+  } catch (error: any) {
+        throw createError(401, 
+          `${error.message.includes('expired') ?
+          'Access token expired': 
+          'Access token invalid'
+        }`)
+  }
 }
 
