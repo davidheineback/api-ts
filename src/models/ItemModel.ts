@@ -1,21 +1,20 @@
 import mongoose, { Schema } from 'mongoose'
-import { UserInterface, UserModel } from './UserModel';
+import { UserInterface } from './UserModel';
 
 export interface ItemInterface {
   owner: UserInterface,
   name: string
-  images: Array<string>,
-  descrition: string,
-  activeAuction: boolean
+  images?: Array<string>,
+  description: string,
+  activeAuction?: boolean
 }
 
 const ItemSchema: Schema<ItemInterface> = new Schema (
   {
    owner: {
-      type: UserModel,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: [true, 'User is required.'],
-      lowercase: true,
-      trim: true
     },
     name: {
       type: String,
@@ -25,9 +24,12 @@ const ItemSchema: Schema<ItemInterface> = new Schema (
       type: [],
       default: []
     },
-    descrition: {
+    description: {
       type: String,
       required: [true, 'Description is required.']
+    },
+    activeAuction: {
+      type: Boolean
     }
   },
   {
