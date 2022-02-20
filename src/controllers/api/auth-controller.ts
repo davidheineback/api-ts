@@ -149,13 +149,11 @@ console.log(paths)
   }
 
   access(req: Request, res: Response, next: NextFunction) {
-    console.log('acccesss')
     const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     if (Bearer === 'Bearer') {
       try {
         verifyAccessToken(token)
         req.body.user = jwt.decode(token)?.sub
-        console.log(req.body.user)
         next()
       } catch (error) {
         next(error)
