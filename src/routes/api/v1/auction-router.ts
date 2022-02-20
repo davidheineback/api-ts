@@ -14,7 +14,9 @@ router.route('/')
   .get(auctionController.index)
   .post(tokenController.access, auctionController.index)
 
-router.route('/:id/bid').post(tokenController.access, auctionController.index)
+router.route('/:id/bid')
+  .post(tokenController.access, auctionController.index)
+  
 router.route('/:id')
   .get(auctionController.index)
   .delete(tokenController.access, auctionController.index)

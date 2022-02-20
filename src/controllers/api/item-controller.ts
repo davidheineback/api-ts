@@ -1,8 +1,8 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
 import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
-import { addItem } from '../../repository/item-repository'
-import { getUserByEmail } from '../../repository/user-repository'
+import { addItem, getAllItemsFrom, getItemFrom } from '../../repository/item-repository'
+import { getUserByEmail, getUserIDByEmail } from '../../repository/user-repository'
 
 /**
  * Encapsulates a controller.
@@ -27,11 +27,46 @@ const paths = getAssociatedLinks(self, linkSelection)
   res.json({ message: 'Item operations:', links: paths })
 }
 
+async getAllUserItems(req: Request, res: Response, next: NextFunction) {
+  const userID = await getUserIDByEmail(req.body.user)
+  console.log(userID)
+  if (userID) {
+    const items = await getAllItemsFrom(userID)
+    res.json({ items, links: 'All' })
+  } else {
+    res.sendStatus(404)
+  }
+  
+  }
+
+async getUserItem(req: Request, res: Response, next: NextFunction) {
+  console.log(req.params.id)
+  try {
+    const userID = await getUserIDByEmail(req.body.user)
+    const item = await getItemFrom(req.params.id)
+    if (item) {
+      console.log(userID)
+      console.log(item.owner)
+      if (userID === item.owner) {
+        console.log(item)
+        res.json({ item, links: 'One' })
+      } else { 
+        next(createError(403))
+      }
+    } else {
+      next(createError(404))
+    }
+  } catch (error) {
+    next(createError(404))
+  }
+
+  
+  }
+
 async createItem(req: Request, res: Response, next: NextFunction) {
   const {user, name, images, description} = req.body
 
   const owner = await getUserByEmail(user)
-  console.log(owner)
   try {
     if (owner) {
       const item = await addItem({
@@ -46,18 +81,10 @@ async createItem(req: Request, res: Response, next: NextFunction) {
     } else {
       throw new Error('Invalid User.')
     }
-    
-
 
   } catch (error: any) {
-    console.log(error)
     let err = error
-
-    if (err.code === 11000) {
-      // Duplicated keys.
-      err = createError(409)
-      err.innerException = error
-    } else if (error.name === 'ValidationError') {
+   if (error.name === 'ValidationError') {
       // Validation error(s).
       err = createError(400)
       err.innerException = error

@@ -11,10 +11,12 @@ const itemController = new ItemController()
 
 // Get routes::
 router.route('/')
-  .get(itemController.index)
-  .post(tokenController.access, itemController.createItem)
+  .all(tokenController.access)
+  .get(itemController.getAllUserItems)
+  .post(itemController.createItem)
 
 router.route('/:id')
-  .get(itemController.index)
-  .put(tokenController.access, itemController.index)
-  .delete(tokenController.access, itemController.index)
+.all(tokenController.access)
+.get(itemController.getUserItem)
+.put(itemController.index)
+.delete(itemController.index)
