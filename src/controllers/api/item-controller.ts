@@ -40,15 +40,11 @@ async getAllUserItems(req: Request, res: Response, next: NextFunction) {
   }
 
 async getUserItem(req: Request, res: Response, next: NextFunction) {
-  console.log(req.params.id)
   try {
     const userID = await getUserIDByEmail(req.body.user)
     const item = await getItemFrom(req.params.id)
     if (item) {
-      console.log(userID)
-      console.log(item.owner)
-      if (userID === item.owner) {
-        console.log(item)
+      if (userID.toString() === item.owner.toString()) {
         res.json({ item, links: 'One' })
       } else { 
         next(createError(403))
