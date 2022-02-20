@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
 import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
-import { addItem, getAllItemsFrom, getItemFrom } from '../../repository/item-repository'
+import { addItem, getAllItemsFrom, getItemFrom, deleteItem } from '../../repository/item-repository'
 import { getUserByEmail, getUserIDByEmail } from '../../repository/user-repository'
 
 /**
@@ -27,37 +27,6 @@ const paths = getAssociatedLinks(self, linkSelection)
   res.json({ message: 'Item operations:', links: paths })
 }
 
-async getAllUserItems(req: Request, res: Response, next: NextFunction) {
-  const userID = await getUserIDByEmail(req.body.user)
-  console.log(userID)
-  if (userID) {
-    const items = await getAllItemsFrom(userID)
-    res.json({ items, links: 'All' })
-  } else {
-    res.sendStatus(404)
-  }
-  
-  }
-
-async getUserItem(req: Request, res: Response, next: NextFunction) {
-  try {
-    const userID = await getUserIDByEmail(req.body.user)
-    const item = await getItemFrom(req.params.id)
-    if (item) {
-      if (userID.toString() === item.owner.toString()) {
-        res.json({ item, links: 'One' })
-      } else { 
-        next(createError(403))
-      }
-    } else {
-      next(createError(404))
-    }
-  } catch (error) {
-    next(createError(404))
-  }
-
-  
-  }
 
 async createItem(req: Request, res: Response, next: NextFunction) {
   const {user, name, images, description} = req.body
@@ -88,5 +57,64 @@ async createItem(req: Request, res: Response, next: NextFunction) {
     next(err)
   }
 }
+
+async getAllUserItems(req: Request, res: Response, next: NextFunction) {
+  const userID = await getUserIDByEmail(req.body.user)
+  console.log(userID)
+  if (userID) {
+    const items = await getAllItemsFrom(userID)
+    res.json({ items, links: 'All' })
+  } else {
+    res.sendStatus(404)
+  }
+  
+  }
+
+async getUserItem(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userID = await getUserIDByEmail(req.body.user)
+    const item = await getItemFrom(req.params.id)
+    if (item) {
+      if (userID.toString() === item.owner.toString()) {
+        res.json({ item, links: 'One' })
+      } else { 
+        next(createError(403))
+      }
+    } else {
+      next(createError(404))
+    }
+  } catch (error) {
+    next(createError(404))
+  }
+  
+  }
+
+  async deleteUserItem(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userID = await getUserIDByEmail(req.body.user)
+      const deletedItem = await deleteItem(req.params.id, userID)
+      if (deletedItem) {
+        res.sendStatus(204)
+      } else {
+        throw createError(404)
+      }
+    } catch (error) {
+      next(error)
+    }
+    }
+
+  async updateUserItem(req: Request, res: Response, next: NextFunction) {
+    // try {
+    //   const userID = await getUserIDByEmail(req.body.user)
+    //   const del = await deleteItem(req.params.id, userID)
+    //   console.log(del)
+    //   res.sendStatus(204)
+    // } catch (error) {
+    //   next(createError(404))
+    // }
+    
+    }
+
+
 
 }

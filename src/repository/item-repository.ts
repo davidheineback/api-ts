@@ -14,3 +14,7 @@ export async function getAllItemsFrom(userID: string) {
 export async function getItemFrom(itemID: string) {
   return await ItemModel.findOne({ _id: itemID })
 }
+
+export async function deleteItem(itemID: string, userID: string) {
+  return await ItemModel.findOneAndDelete({ _id: itemID, owner: userID })
+}
