@@ -17,6 +17,6 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 })
 
 router.use('/auth', authRouter)
-router.use('/item', itemRouter)
+router.use('/items', itemRouter)
 router.use('/auction', auctionRouter)
 
