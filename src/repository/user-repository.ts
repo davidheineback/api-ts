@@ -11,6 +11,11 @@ export async function getUserByEmail(username: string) {
   return user
 }
 
+export async function getUserIDByEmail(username: string) {
+  const user = await UserModel.findOne({ username })
+  return user?._id
+}
+
 
 export async function authorizeUser(username: string, password: string) {
   const user = await getUserByEmail(username)
