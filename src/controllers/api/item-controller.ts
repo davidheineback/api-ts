@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
 import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
-import { addItem, getAllItemsFrom, getItemFrom, deleteItem } from '../../repository/item-repository'
+import { addItem, getAllItemsFrom, getItemFrom, deleteItem, updateItem, UpdateItem } from '../../repository/item-repository'
 import { getUserByEmail, getUserIDByEmail } from '../../repository/user-repository'
 
 /**
@@ -90,9 +90,11 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
   }
 
   async deleteUserItem(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params
+    const { user } = req.body
     try {
-      const userID = await getUserIDByEmail(req.body.user)
-      const deletedItem = await deleteItem(req.params.id, userID)
+      const userID = await getUserIDByEmail(user)
+      const deletedItem = await deleteItem(id, userID)
       if (deletedItem) {
         res.sendStatus(204)
       } else {
@@ -104,14 +106,32 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
     }
 
   async updateUserItem(req: Request, res: Response, next: NextFunction) {
-    // try {
-    //   const userID = await getUserIDByEmail(req.body.user)
-    //   const del = await deleteItem(req.params.id, userID)
-    //   console.log(del)
-    //   res.sendStatus(204)
-    // } catch (error) {
-    //   next(createError(404))
-    // }
+    const { id } = req.params
+    const { name, description, user } = req.body
+
+    try {
+      const userID = await getUserIDByEmail(user)
+
+      if(userID) {
+        const updates: UpdateItem = {
+          name,
+          description,
+          userID
+        }
+        const item = await updateItem(id, updates)
+        if (item) {
+          console.log(item)
+          res.sendStatus(200)
+        } else {
+          throw createError(403)  
+        }
+      } else {
+        throw createError(404)
+      }
+      
+    } catch (error) {
+      next(createError(404))
+    }
     
     }
 

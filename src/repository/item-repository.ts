@@ -18,3 +18,13 @@ export async function getItemFrom(itemID: string) {
 export async function deleteItem(itemID: string, userID: string) {
   return await ItemModel.findOneAndDelete({ _id: itemID, owner: userID })
 }
+
+export async function updateItem(itemID: string, item: UpdateItem) {
+  return await ItemModel.findOneAndUpdate({ _id: itemID, owner: item.userID }, item)
+}
+
+export type UpdateItem = {
+  name: string,
+  description: string,
+  userID: string
+}
