@@ -1,15 +1,24 @@
 import mongoose, { Schema } from 'mongoose'
+import { UserInterface } from './UserModel';
 
 // Events: Login = new login from user, bid = Bid is placed on users item , end = auction ended , higherBid = someone outbid user
 
-interface ValidHookEventsInterface {
+
+export enum ValidHookEvent {
+  LOGIN = 'login',
+  BID = 'bid',
+  HIGERBID = 'higherBid',
+  END = 'end'
+}
+
+export interface ValidHookEventsInterface {
   login?: boolean,
   bid?: boolean,
   higherBid?: boolean,
   end?: boolean
 }
 
-const ValidHooksSchema: Schema<ValidHookEventsInterface> = new Schema (
+export const ValidHooksSchema: Schema<ValidHookEventsInterface> = new Schema (
   {
     login: {
       type: Boolean,
@@ -31,13 +40,19 @@ const ValidHooksSchema: Schema<ValidHookEventsInterface> = new Schema (
 )
 
 export interface WebhookInterface {
+user: UserInterface,
 url: string,
 events: ValidHookEventsInterface,
 secret: string
 }
 
-const Webhookchema: Schema<WebhookInterface> = new Schema (
+const WebhookSchema: Schema<WebhookInterface> = new Schema (
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'User is required.'],
+    },
     url: {
       type: String,
       required: true,
@@ -60,5 +75,5 @@ const Webhookchema: Schema<WebhookInterface> = new Schema (
 )
 
 
-export const WebhookModel = mongoose.model<WebhookInterface>('hook', Webhookchema)
+export const WebhookModel = mongoose.model<WebhookInterface>('hook', WebhookSchema)
   

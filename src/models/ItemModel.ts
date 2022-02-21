@@ -2,10 +2,10 @@ import mongoose, { Schema } from 'mongoose'
 import { UserInterface } from './UserModel';
 
 export interface ItemInterface {
-  owner: UserInterface,
+  owner: UserInterface
   name: string
-  images?: Array<string>,
-  description: string,
+  images?: Array<string>
+  description: string
   activeAuction?: boolean
 }
 
