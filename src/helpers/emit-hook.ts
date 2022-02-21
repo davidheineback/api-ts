@@ -15,7 +15,7 @@ export function addEventListener() {
         loginHook.forEach((hook: { url: string; secret: string }) => postHookEvent(hook.url, hook.secret))
         
       } else {
-        throw createError(400)
+        throw createError(404)
       }
     } catch (error) {
       console.log(error)
