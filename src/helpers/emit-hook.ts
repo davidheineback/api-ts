@@ -9,7 +9,6 @@ export const emitter = new EventEmitter()
 
 export function addEventListener() {
   emitter.on(ValidHookEvent.LOGIN, async(userID) => {
-    console.log(userID)
     try {
       const loginHook: Array<WebhookInterface> | [] = await getUserWebHook(userID.toString(), ValidHookEvent.LOGIN)
       if (loginHook.length > 0) {
