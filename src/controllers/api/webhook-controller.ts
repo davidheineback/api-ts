@@ -10,7 +10,6 @@ import { getUserIDByEmail } from '../../repository/user-repository'
 export class WebhookController {
 
 index(req: Request, res: Response, next: NextFunction) {
-  console.log(req.params)
   console.log('Hello from Hook index')
   const self: Self = {
     url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
@@ -29,7 +28,7 @@ const paths = getAssociatedLinks(self, linkSelection)
 
 
 async subscribe(req: Request, res: Response, next: NextFunction) {
-  const {user, events, secret} = req.body
+  const {user, events, secret, url} = req.body
   const owner = await getUserIDByEmail(user)
   Object.keys(events).includes  
   if (events)
@@ -37,7 +36,7 @@ async subscribe(req: Request, res: Response, next: NextFunction) {
     if (owner) {
       const hook = await addHook({
         user: owner,
-        url: 'https://webhook.site/bcfe19bc-ccc4-47a5-957c-2704ef01ab84',
+        url,
         events:  events,
         secret
       })
@@ -45,7 +44,7 @@ async subscribe(req: Request, res: Response, next: NextFunction) {
       .status(201)
       .json({ hook })
     } else {
-      throw new Error('Invalid User.')
+      throw new Error('Invalid Hook.')
     }
 
   } catch (error: any) {
