@@ -5,6 +5,7 @@ import helmet from 'helmet'
 import cors from 'cors'
 import logger from 'morgan'
 import { router } from './routes/router';
+import { addEventListener } from './helpers/emit-hook'
 
 
 
@@ -26,6 +27,8 @@ const main = async () => {
   app.use(router)
 
   app.use(errorMiddleware)
+
+  addEventListener()
 
   app.listen(process.env.PORT, () => {
     console.log(
