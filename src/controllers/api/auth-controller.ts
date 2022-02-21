@@ -6,6 +6,8 @@ import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
 import { setToken, deleteToken, getTokenByEmail, getRefreshToken } from '../../repository/token-repository'
 import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
+import { emitter } from '../../helpers/emit-hook'
+import { ValidHookEvent } from '../../models/WebhookModel'
 
 /**
  * Encapsulates a controller.
@@ -80,6 +82,8 @@ console.log(paths)
 
       await setToken(refreshToken)
       
+      emitter.emit(ValidHookEvent.LOGIN, user._id)
+
       res
         .status(200)
         .json({
