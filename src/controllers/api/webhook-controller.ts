@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
 import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
-import { addItem, getAllItemsFrom, getItemFrom, deleteItem, updateItem, UpdateItem } from '../../repository/item-repository'
+import { addHook } from '../../repository/webhook-repository'
 import { getUserByEmail, getUserIDByEmail } from '../../repository/user-repository'
 
 /**
@@ -27,22 +27,32 @@ const paths = getAssociatedLinks(self, linkSelection)
   res.json({ message: 'Item operations:', links: paths })
 }
 
+// {
+//   user:
+//   url: 
+//   events: {
+//     type: ValidHooksSchema,
+//     required: true
+//   },
+//   secret:
+// }
+
 
 async subscribe(req: Request, res: Response, next: NextFunction) {
-  const {user, name, images, description} = req.body
-
-  const owner = await getUserByEmail(user)
+  const {user, events} = req.body
+  const owner = await getUserIDByEmail(user)
+  console.log(events)
   try {
     if (owner) {
-      const item = await addItem({
-        owner,
-        name,
-        images,
-        description
+      const hook = await addHook({
+        user: owner,
+        url: 'https://webhook.site/bcfe19bc-ccc4-47a5-957c-2704ef01ab84',
+        events:  events,
+        secret: 'aaksndajfbnsbsj'
       })
       res
       .status(201)
-      .json({ item })
+      .json({ hook })
     } else {
       throw new Error('Invalid User.')
     }

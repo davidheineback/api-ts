@@ -1,4 +1,4 @@
-import { WebhookInterface, WebhookModel } from '../models/WebhookModel'
+import { ValidHookEvent, WebhookInterface, WebhookModel } from '../models/WebhookModel'
 
 export async function addHook(hooks: WebhookInterface): Promise<WebhookInterface> {
   const newHook = new WebhookModel(hooks)
@@ -6,6 +6,15 @@ export async function addHook(hooks: WebhookInterface): Promise<WebhookInterface
   return saveHook
 }
 
-export async function getUserWebHook(userID: string, event: string) {
-  return await WebhookModel.find({ user: userID, events: event })
+export async function getUserWebHook(userID: string, event:ValidHookEvent ) {
+
+  const hooks = await WebhookModel.find({ user: userID })
+  if (hooks.length > 0) {
+    console.log('hej')
+    return hooks.filter(hook => hook.events[event])
+  }
+  
+  return hooks
 }
+
+

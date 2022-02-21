@@ -11,38 +11,32 @@ export enum ValidHookEvent {
   END = 'end'
 }
 
-export interface ValidHookEventsInterface {
-  login?: boolean,
-  bid?: boolean,
-  higherBid?: boolean,
-  end?: boolean
+// export const HookEvents = [
+//   ValidHookEvent.LOGIN,
+//   ValidHookEvent.BID,
+//   ValidHookEvent.HIGERBID,
+//   ValidHookEvent.END
+// ]
+
+export const HookEvents = {
+  login: {type: Boolean, default: false},
+  bid: {type: Boolean, default: false},
+  higherBid: {type: Boolean, default: false},
+  end: {type: Boolean, default: false}
 }
 
-export const ValidHooksSchema: Schema<ValidHookEventsInterface> = new Schema (
-  {
-    login: {
-      type: Boolean,
-    },
-    bid: {
-      type: Boolean,
-    },
-    higherBid: {
-      type: Boolean,
-    },
-    end: {
-      type: Boolean
-    }
-  },
-  {
-    timestamps: true,
-    versionKey: false
-  }
-)
+export interface ValidHookEventsInterface {
+  login: boolean
+  bid: boolean
+  higherBid: boolean
+  end: boolean,
+}
+
 
 export interface WebhookInterface {
-user: UserInterface,
-url: string,
-events: ValidHookEventsInterface,
+user: UserInterface
+url: string
+events: ValidHookEventsInterface
 secret: string
 }
 
@@ -58,10 +52,7 @@ const WebhookSchema: Schema<WebhookInterface> = new Schema (
       required: true,
       trim: true
     },
-    events: {
-      type: ValidHooksSchema,
-      required: true
-    },
+    events: HookEvents,
     secret: {
       type: String,
       required: [true, 'Webhook secret is required.'],

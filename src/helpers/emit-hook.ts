@@ -7,20 +7,21 @@ import createError from 'http-errors'
 
 export const emitter = new EventEmitter()
 
-
-
-
 export function addEventListener() {
   emitter.on(ValidHookEvent.LOGIN, async(userID) => {
+    console.log(userID)
     try {
-      const loginHook: any = await getUserWebHook(userID, ValidHookEvent.LOGIN)
-      if (loginHook) {
-        postHookEvent(loginHook.url, loginHook.secret)
+      const loginHook: any | null = await getUserWebHook(userID.toString(), ValidHookEvent.LOGIN)
+      console.log(loginHook)
+      if (loginHook.length > 0) {
+        // console.log(loginHook)
+        loginHook.forEach((hook: { url: string; secret: string }) => postHookEvent(hook.url, hook.secret))
+        
       } else {
         throw createError(400)
       }
     } catch (error) {
-      
+      console.log(error)
     }
   } )
 
