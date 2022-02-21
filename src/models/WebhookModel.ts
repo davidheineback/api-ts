@@ -11,12 +11,6 @@ export enum ValidHookEvent {
   END = 'end'
 }
 
-// export const HookEvents = [
-//   ValidHookEvent.LOGIN,
-//   ValidHookEvent.BID,
-//   ValidHookEvent.HIGERBID,
-//   ValidHookEvent.END
-// ]
 
 export const HookEvents = {
   login: {type: Boolean, default: false},

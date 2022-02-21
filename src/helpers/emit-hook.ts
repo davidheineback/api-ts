@@ -11,10 +11,8 @@ export function addEventListener() {
   emitter.on(ValidHookEvent.LOGIN, async(userID) => {
     console.log(userID)
     try {
-      const loginHook: any | null = await getUserWebHook(userID.toString(), ValidHookEvent.LOGIN)
-      console.log(loginHook)
+      const loginHook: Array<WebhookInterface> | [] = await getUserWebHook(userID.toString(), ValidHookEvent.LOGIN)
       if (loginHook.length > 0) {
-        // console.log(loginHook)
         loginHook.forEach((hook: { url: string; secret: string }) => postHookEvent(hook.url, hook.secret))
         
       } else {
