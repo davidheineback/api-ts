@@ -120,7 +120,6 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
         }
         const item = await updateItem(id, updates)
         if (item) {
-          console.log(item)
           res.sendStatus(200)
         } else {
           throw createError(403)  
@@ -130,7 +129,7 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
       }
       
     } catch (error) {
-      next(createError(404))
+      next(error)
     }
     
     }
