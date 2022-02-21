@@ -13,9 +13,9 @@ export const emitter = new EventEmitter()
 export function addEventListener() {
   emitter.on(ValidHookEvent.LOGIN, async(userID) => {
     try {
-      const loginHook:  = await getUserWebHook(userID, ValidHookEvent.LOGIN)
+      const loginHook: any = await getUserWebHook(userID, ValidHookEvent.LOGIN)
       if (loginHook) {
-        postHookEvent(loginHook!.url!, loginHook.secret!)
+        postHookEvent(loginHook.url, loginHook.secret)
       } else {
         throw createError(400)
       }
