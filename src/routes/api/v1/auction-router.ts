@@ -12,7 +12,7 @@ const auctionController = new AuctionController()
 // Get routes::
 router.route('/')
   .get(auctionController.index)
-  .post(tokenController.access, auctionController.index)
+  .post(tokenController.access, auctionController.createAuction)
 
 router.route('/:id/bid')
   .post(tokenController.access, auctionController.index)

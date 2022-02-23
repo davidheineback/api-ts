@@ -5,3 +5,9 @@ export async function addAuction(auction: AuctionInterface): Promise<AuctionInte
   const saveAuction= await newAuction.save()
   return saveAuction
 }
+
+export async function getActiveAuctions() {
+  const activeAuctions = await AuctionModel.find({})
+  return activeAuctions
+}
+

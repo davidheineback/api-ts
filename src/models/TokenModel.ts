@@ -29,7 +29,7 @@ const TokenSchema: Schema<TokenInterface> = new Schema (
 
 TokenSchema.index(
   { createdAt: 1 },
-  { expireAfterSeconds: 60*60*24*100 }
+  { expireAfterSeconds: 60*60*24*6 }
 )
 
 

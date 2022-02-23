@@ -9,6 +9,14 @@ export interface ItemInterface {
   activeAuction?: boolean
 }
 
+export const ItemType: Schema<ItemInterface> = new Schema ({
+  owner: {type: Schema.Types.ObjectId, required: true},
+  name: {type: String, required: true},
+  images: {type: [String], default: []},
+  description: {type: String, required: true},
+  activeAuction: {type: Boolean, required: false},
+})
+
 const ItemSchema: Schema<ItemInterface> = new Schema (
   {
    owner: {

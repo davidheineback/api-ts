@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
-import { ItemInterface, ItemModel } from './ItemModel';
-import { UserInterface, UserModel } from './UserModel';
+import { ItemInterface, ItemModel, ItemType } from './ItemModel';
+import { UserInterface } from './UserModel';
 
 interface BidInterface {
   bidder: UserInterface,
@@ -26,19 +26,20 @@ const BidSchema: Schema<BidInterface> = new Schema (
 )
 
 export interface AuctionInterface {
-  item: ItemInterface,
+  item: ItemInterface
   initialPrice: number
-  currentPrice: number
-  highestBidder: UserInterface
-  bids: Array<BidInterface>
+  currentPrice?: number
+  currency?: string
+  highestBidder?: UserInterface
+  bids?: Array<BidInterface>
   expires: Date
-  payed: boolean
+  payed?: boolean
 }
 
 const AuctionSchema: Schema<AuctionInterface> = new Schema (
   {
     item: {
-      type: ItemModel,
+      type: ItemType,
       required: true,
     },
     initialPrice: {
@@ -48,8 +49,12 @@ const AuctionSchema: Schema<AuctionInterface> = new Schema (
     currentPrice: {
       type: Number,
     },
+    currency: {
+      type: String,
+      default: 'SEK'
+    },
     highestBidder:  {
-      type: UserModel
+      type: String
     },
     bids: {
       type: [BidSchema],
@@ -60,7 +65,8 @@ const AuctionSchema: Schema<AuctionInterface> = new Schema (
       required: [true, 'End date is required.']
     },
     payed: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   },
   {
