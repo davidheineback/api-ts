@@ -12,5 +12,4 @@ const webhookController = new WebhookController()
 // Get routes::
 router.route('/')
   .all(tokenController.access)
-  .get(webhookController.index)
   .post(webhookController.subscribe)
