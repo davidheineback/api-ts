@@ -22,7 +22,14 @@ export type Self = {
   method: string
 }
 
+
+
 export function createSelf(url: string, method: string) {
+
+  if (url.substring(url.length-1) === '/') {
+    url = url.substring(0, url.length-1)
+  }
+
   const self: Self =  {
     url,
     method
