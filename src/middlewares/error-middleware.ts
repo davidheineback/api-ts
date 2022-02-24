@@ -4,8 +4,7 @@ import { createSelf, getAssociatedLinks, Links } from '../helpers/hateoas'
 
 export const errorMiddleware = (err: HttpError, req: Request, res: Response, next: NextFunction) => {
   err.status = err.status || 500
-
-  const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+  const self = createSelf(`${req.protocol}://${req.get('host')}/api/auth`, req.method)
   const linkSelection: Links = {
     refresh: true,
     register: true,
