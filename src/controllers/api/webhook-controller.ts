@@ -9,24 +9,6 @@ import { getUserIDByEmail } from '../../repository/user-repository'
  */
 export class WebhookController {
 
-index(req: Request, res: Response, next: NextFunction) {
-  console.log('Hello from Hook index')
-  const self: Self = {
-    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-    method: req.method
-  } 
-    const linkSelection: Links = {
-      register: true,
-      login: true,
-    }
-
-const paths = getAssociatedLinks(self, linkSelection)
-// console.log(paths)
-
-  res.json({ message: 'Item operations:', links: paths })
-}
-
-
 async subscribe(req: Request, res: Response, next: NextFunction) {
   const {user, events, secret, url} = req.body
   const owner = await getUserIDByEmail(user)
