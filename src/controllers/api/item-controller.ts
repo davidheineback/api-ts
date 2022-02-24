@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
-import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
+import { getAssociatedLinks, Links, createSelf } from '../../helpers/hateoas'
 import { addItem, getAllItemsFrom, getItemFrom, deleteItem, updateItem, UpdateItem } from '../../repository/item-repository'
 import { getUserByEmail, getUserIDByEmail } from '../../repository/user-repository'
 
@@ -10,21 +10,18 @@ import { getUserByEmail, getUserIDByEmail } from '../../repository/user-reposito
 export class ItemController {
 
 index(req: Request, res: Response, next: NextFunction) {
-  console.log(req.params)
-  console.log('Hello from Item index')
-  const self: Self = {
-    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-    method: req.method
-  } 
-    const linkSelection: Links = {
-      register: true,
-      login: true,
-    }
+  const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+  const linkSelection: Links = {
+    logout: true,
+    refresh: true,
+    getItems: true,
+    getItem: true,
+    addItem: true
+  }
 
 const paths = getAssociatedLinks(self, linkSelection)
-// console.log(paths)
 
-  res.json({ message: 'Item operations:', links: paths })
+  res.json({ message: 'Item operations:', paths })
 }
 
 
@@ -40,9 +37,21 @@ async createItem(req: Request, res: Response, next: NextFunction) {
         images,
         description
       })
+
+      const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+      const linkSelection: Links = {
+        addItem: true,
+        getItems: true,
+        getItem: true,
+        changeItem: true,
+        logout: true,
+        refresh: true
+      }
+  
+      const paths = getAssociatedLinks(self, linkSelection)
       res
       .status(201)
-      .json({ item })
+      .json({ item, paths })
     } else {
       throw new Error('Invalid User.')
     }
@@ -63,7 +72,20 @@ async getAllUserItems(req: Request, res: Response, next: NextFunction) {
   console.log(userID)
   if (userID) {
     const items = await getAllItemsFrom(userID)
-    res.json({ items, links: 'All' })
+
+    const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+    const linkSelection: Links = {
+      getItems: true,
+      getItem: true,
+      addItem: true,
+      changeItem: true,
+      deleteItem: true,
+      logout: true,
+      refresh: true
+    }
+    const paths = getAssociatedLinks(self, linkSelection)
+
+    res.json({ items, paths })
   } else {
     res.sendStatus(404)
   }
@@ -76,7 +98,18 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
     const item = await getItemFrom(req.params.id)
     if (item) {
       if (userID.toString() === item.owner.toString()) {
-        res.json({ item, links: 'One' })
+        const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+        const linkSelection: Links = {
+          getItem: true,
+          getItems: true,
+          changeItem: true,
+          addItem: true,
+          deleteItem: true,
+          logout: true,
+          refresh: true
+        }
+        const paths = getAssociatedLinks(self, linkSelection)
+        res.json({ item, paths })
       } else { 
         next(createError(403))
       }
@@ -120,6 +153,16 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
         }
         const item = await updateItem(id, updates)
         if (item) {
+          const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+          const linkSelection: Links = {
+            getItem: true,
+            getItems: true,
+            changeItem: true,
+            deleteItem: true,
+            logout: true,
+            refresh: true
+          }
+          const paths = getAssociatedLinks(self, linkSelection)
           res.sendStatus(200)
         } else {
           throw createError(403)  

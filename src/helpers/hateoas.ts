@@ -1,14 +1,33 @@
 export type Links = {
-  self?: boolean,
-  register?: boolean,
-  login?: boolean,
+  self?: boolean
+  register?: boolean
+  login?: boolean
   logout?: boolean
+  refresh?: boolean
+  getItems?: boolean
+  getItem?: boolean
   addItem?: boolean
+  changeItem?: boolean
+  deleteItem?: boolean
+  postWebhook?: boolean
+  getAuction?: boolean
+  postAuction?: boolean
+  getAuctionID?: boolean
+  deleteAuctionID?: boolean
+  postauctionIDBid?: boolean
 }
 
 export type Self = {
   url: string
   method: string
+}
+
+export function createSelf(url: string, method: string) {
+  const self: Self =  {
+    url,
+    method
+  } 
+  return self
 }
 
 
@@ -40,31 +59,79 @@ function setUpLinks(self: string) {
   {
     name: 'logout',
     method: 'DELETE',
+    authentication: 'Bearer <Token>',
     link: `${self}/logout`,
-    description: 'Logout user.',
-    bodyTemplate: {
-      refresh_token: 'string',
-    }
+    description: 'Logout user.'
   },
   {
-    name: 'logout-all',
-    method: 'DELETE',
-    link: `${self}/logout-all`,
-    description: 'Logout all users active sessions.',
-    bodyTemplate: {
-      username: 'string',
-      refresh_token: 'string',
-    }
+    name: 'refresh',
+    method: 'GET',
+    authentication: 'Bearer <Token>',
+    link: `${self}/refresh`,
+    description: 'Get a new accesstoken from refreshtoken'
   },
   {
-    name: 'add-item',
+    name: 'getItems',
+    method: 'GET',
+    authentication: 'Bearer <Token>',
+    link: `${self}/items`,
+    description: 'Get all items for authenticated user.'
+  },
+  {
+    name: 'getItem',
+    method: 'GET',
+    authentication: 'Bearer <Token>',
+    link: `${self}/items/:id`,
+    description: 'Get specified item for authenticated user.'
+  },
+  {
+    name: 'addItem',
     method: 'POST',
-    link: `${self}/item`,
+    authentication: 'Bearer <Token>',
+    link: `${self}/items`,
     description: 'Create a new item.',
     bodyTemplate: {
       name: 'string',
-      images: 'Array<img-src>',
+      images: 'Array<"img-src">',
       description: 'string'
+    }
+  },
+  {
+    name: 'changeItem',
+    method: 'PUT',
+    authentication: 'Bearer <Token>',
+    link: `${self}/items/:id`,
+    description: 'Change a existing item.',
+    bodyTemplate: {
+      name: 'string',
+      images: 'Array<"img-src">',
+      description: 'string'
+    }
+  },
+  {
+    name: 'deleteItem',
+    method: 'DELETE',
+    authentication: 'Bearer <Token>',
+    link: `${self}/items/:id`,
+    description: 'Delete a existing item.',
+    bodyTemplate: {
+      name: 'string',
+      images: 'Array<"img-src">',
+      description: 'string'
+    }
+  },
+  {
+    name: 'webhook',
+    method: 'POST',
+    authentication: 'Bearer <Token>',
+    link: `${self}/webhook/`,
+    description: 'Subscribe to a webhook. \nSupported events: new successful login for user.',
+    bodyTemplate: {
+      url: 'string',
+      events: {
+        'event': 'boolean'
+      },
+      secret: 'string'
     }
   }
   
@@ -75,5 +142,12 @@ return links
 
 
 export function getAssociatedLinks (self: Self, linkSelection: Links) {
-  return setUpLinks(self.url).filter(link => Object.keys(linkSelection).includes(link.name) && (linkSelection as any)[link.name])
+  const links: Array<{[key: string]: any}> = setUpLinks(self.url)
+  .filter(link => Object.keys(linkSelection).includes(link.name) && (linkSelection as any)[link.name])
+  links.map((link, index) => {
+    if (link.link === self.url && link.method === self.method) {
+      links[index] = {...link, self: true}
+    } 
+  })
+  return links
 }

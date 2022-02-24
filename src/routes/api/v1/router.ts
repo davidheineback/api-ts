@@ -13,8 +13,11 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 {
   entry: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
   authenticate: `${req.protocol}://${req.get('host')}${req.originalUrl}/auth`,
+  items: `${req.protocol}://${req.get('host')}${req.originalUrl}/items`,
+  webhook: `${req.protocol}://${req.get('host')}${req.originalUrl}/webhook`,
+  auctions: `${req.protocol}://${req.get('host')}${req.originalUrl}/auction`,
 }
-  res.json({ message: 'Welcome to this API!', links: paths })
+  res.json({ message: 'Welcome to this API!', paths })
 })
 
 router.use('/auth', authRouter)

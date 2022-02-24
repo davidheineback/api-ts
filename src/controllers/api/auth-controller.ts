@@ -4,8 +4,8 @@ import { Request, Response, NextFunction } from 'express'
 import { getAccessAndRefreshToken, verifyRefreshToken, verifyAccessToken, getAccessToken } from './token-controller'
 import { addUser, authorizeUser } from '../../repository/user-repository'
 import { TokenInterface } from '../../models/TokenModel'
-import { setToken, deleteToken, getTokenByEmail, getRefreshToken } from '../../repository/token-repository'
-import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
+import { setToken, deleteToken, getRefreshToken } from '../../repository/token-repository'
+import { createSelf, getAssociatedLinks, Links } from '../../helpers/hateoas'
 import { emitter } from '../../helpers/emit-hook'
 import { ValidHookEvent } from '../../models/WebhookModel'
 
@@ -15,22 +15,20 @@ import { ValidHookEvent } from '../../models/WebhookModel'
 export class AuthController {
 
 index (req: Request, res: Response, next: NextFunction) {
-  console.log('Hello!')
 
-  const self: Self =  {
-    url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-    method: req.method
-  } 
+  const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
     const linkSelection: Links = {
       register: true,
       login: true,
+      logout: true,
+      refresh: true
     }
 
 const paths = getAssociatedLinks(self, linkSelection)
-console.log(paths)
 
-  res.json({ message: 'Authentication operations:', links: paths })
+  res.json({ message: 'Authentication operations:', paths })
 }
+
 
 
   async register (req: Request, res: Response, next: NextFunction) {
@@ -45,9 +43,17 @@ console.log(paths)
         password
       })
 
+      const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+      const linkSelection: Links = {
+        register: true,
+        login: true
+      }
+  
+      const paths = getAssociatedLinks(self, linkSelection)
+
       res
         .status(201)
-        .json({ id: user.username })
+        .json({ id: user.username, paths })
     } catch (error: any) {
       let err = error
 
@@ -84,12 +90,26 @@ console.log(paths)
       
       emitter.emit(ValidHookEvent.LOGIN, user._id)
 
+      const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+      const linkSelection: Links = {
+        login: true,
+        logout: true,
+        refresh: true,
+        postWebhook: true,
+        getItems: true,
+        getItem: true,
+        addItem: true
+      }
+  
+      const paths = getAssociatedLinks(self, linkSelection)
+
       res
         .status(200)
         .json({
           user: payload,
           access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token
+          refresh_token: tokens.refresh_token,
+          paths
         })
     } catch (error) {
       // Authentication failed.
@@ -118,6 +138,7 @@ console.log(paths)
     }
   }
 
+
   async refresh(req: Request, res: Response, next: NextFunction) {
     const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     if (Bearer === 'Bearer') {
@@ -129,11 +150,26 @@ console.log(paths)
           req.body.user = jwt.decode(token)?.sub
           const payload = { sub: req.body.user }
           const newAccessToken = getAccessToken(payload)
+
+          const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+          const linkSelection: Links = {
+            login: true,
+            logout: true,
+            refresh: true,
+            postWebhook: true,
+            getItems: true,
+            getItem: true,
+            addItem: true
+          }
+      
+          const paths = getAssociatedLinks(self, linkSelection)
+    
           res
           .status(200)
           .json({
             user: payload,
-            access_token: newAccessToken
+            access_token: newAccessToken,
+            paths
           })
         } else {
           next(createError(401))

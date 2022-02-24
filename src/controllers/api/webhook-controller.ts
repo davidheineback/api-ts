@@ -1,6 +1,6 @@
 import createError from 'http-errors'
 import { Request, Response, NextFunction } from 'express'
-import { getAssociatedLinks, Links, Self } from '../../helpers/hateoas'
+import { getAssociatedLinks, Links, createSelf } from '../../helpers/hateoas'
 import { addHook } from '../../repository/webhook-repository'
 import { getUserIDByEmail } from '../../repository/user-repository'
 
@@ -22,9 +22,24 @@ async subscribe(req: Request, res: Response, next: NextFunction) {
         events:  events,
         secret
       })
+
+      const self = createSelf(`${req.protocol}://${req.get('host')}${req.originalUrl}`, req.method)
+      const linkSelection: Links = {
+        login: true,
+        logout: true,
+        refresh: true,
+        postWebhook: true,
+        getItems: true,
+        getItem: true,
+        addItem: true
+      }
+  
+      const paths = getAssociatedLinks(self, linkSelection)
+
+
       res
       .status(201)
-      .json({ hook })
+      .json({ hook, paths })
     } else {
       throw new Error('Invalid Hook.')
     }
