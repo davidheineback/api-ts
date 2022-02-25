@@ -122,8 +122,8 @@ const paths = getAssociatedLinks(self, linkSelection)
 
 
   async logout (req: Request, res: Response, next: NextFunction) {
-    const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     try {
+      const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
       if (Bearer === 'Bearer') {
         token && await deleteToken(token)
         res.sendStatus(204)
@@ -140,10 +140,11 @@ const paths = getAssociatedLinks(self, linkSelection)
 
 
   async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
     const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     if (Bearer === 'Bearer') {
     
-      try {
+ 
         const refreshToken = await getRefreshToken(token)
         if (refreshToken) {
           verifyRefreshToken(token)
@@ -174,33 +175,32 @@ const paths = getAssociatedLinks(self, linkSelection)
         } else {
           next(createError(401))
         }
-        
-      } catch (error) {
-        const err = createError(401)
-        err.innerException = error
-        next(error)
-      }
     } else {
       const error = createError(401)
       next(error)
     }
+  } catch (error) {
+    const err = createError(401)
+    err.innerException = error
+    next(error)
+  }
  
 
   }
 
   access(req: Request, res: Response, next: NextFunction) {
+    try {
     const [Bearer, token] = <string[]>req.headers.authorization?.split(' ')
     if (Bearer === 'Bearer') {
-      try {
         verifyAccessToken(token)
         req.body.user = jwt.decode(token)?.sub
         next()
-      } catch (error) {
-        error = createError(401)
-        next(error)
-      }
     } else {
       const error = createError(401)
+      next(error)
+    }
+  } catch (error) {
+      error = createError(401)
       next(error)
     }
   }
