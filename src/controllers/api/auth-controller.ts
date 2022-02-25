@@ -196,6 +196,7 @@ const paths = getAssociatedLinks(self, linkSelection)
         req.body.user = jwt.decode(token)?.sub
         next()
       } catch (error) {
+        error = createError(401)
         next(error)
       }
     } else {
