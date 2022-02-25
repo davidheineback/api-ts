@@ -34,7 +34,8 @@ async subscribe(req: Request, res: Response, next: NextFunction) {
         addItem: true
       }
   
-      const paths = getAssociatedLinks(self, linkSelection)
+      const entry = `${req.protocol}://${req.get('host')}`
+      const paths = getAssociatedLinks(self, linkSelection, entry)
 
 
       res

@@ -24,7 +24,8 @@ index (req: Request, res: Response, next: NextFunction) {
       refresh: true
     }
 
-const paths = getAssociatedLinks(self, linkSelection)
+    const entry = `${req.protocol}://${req.get('host')}`
+    const paths = getAssociatedLinks(self, linkSelection, entry)
 
   res.json({ message: 'Authentication operations:', paths })
 }
@@ -49,7 +50,8 @@ const paths = getAssociatedLinks(self, linkSelection)
         login: true
       }
   
-      const paths = getAssociatedLinks(self, linkSelection)
+      const entry = `${req.protocol}://${req.get('host')}`
+      const paths = getAssociatedLinks(self, linkSelection, entry)
 
       res
         .status(201)
@@ -101,7 +103,8 @@ const paths = getAssociatedLinks(self, linkSelection)
         addItem: true
       }
   
-      const paths = getAssociatedLinks(self, linkSelection)
+      const entry = `${req.protocol}://${req.get('host')}`
+      const paths = getAssociatedLinks(self, linkSelection, entry)
 
       res
         .status(200)
@@ -163,7 +166,8 @@ const paths = getAssociatedLinks(self, linkSelection)
             addItem: true
           }
       
-          const paths = getAssociatedLinks(self, linkSelection)
+          const entry = `${req.protocol}://${req.get('host')}`
+          const paths = getAssociatedLinks(self, linkSelection, entry)
     
           res
           .status(200)

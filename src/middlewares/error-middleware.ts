@@ -14,7 +14,8 @@ export const errorMiddleware = (err: HttpError, req: Request, res: Response, nex
     register: true,
     login: true,
   }
-  const paths = getAssociatedLinks(self, linkSelection)
+  const entry = `${req.protocol}://${req.get('host')}`
+  const paths = getAssociatedLinks(self, linkSelection, entry)
 
   if (req.app.get('env') !== 'development') {
     res.status(err.status).json({

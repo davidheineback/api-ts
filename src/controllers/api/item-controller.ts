@@ -19,7 +19,8 @@ index(req: Request, res: Response, next: NextFunction) {
     addItem: true
   }
 
-const paths = getAssociatedLinks(self, linkSelection)
+  const entry = `${req.protocol}://${req.get('host')}`
+  const paths = getAssociatedLinks(self, linkSelection, entry)
 
   res.json({ message: 'Item operations:', paths })
 }
@@ -48,7 +49,9 @@ async createItem(req: Request, res: Response, next: NextFunction) {
         refresh: true
       }
   
-      const paths = getAssociatedLinks(self, linkSelection)
+      const entry = `${req.protocol}://${req.get('host')}`
+      const paths = getAssociatedLinks(self, linkSelection, entry)
+
       res
       .status(201)
       .json({ item, paths })
@@ -83,7 +86,9 @@ async getAllUserItems(req: Request, res: Response, next: NextFunction) {
       logout: true,
       refresh: true
     }
-    const paths = getAssociatedLinks(self, linkSelection)
+
+  const entry = `${req.protocol}://${req.get('host')}`
+  const paths = getAssociatedLinks(self, linkSelection, entry)
 
     res.json({ items, paths })
   } else {
@@ -108,7 +113,10 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
           logout: true,
           refresh: true
         }
-        const paths = getAssociatedLinks(self, linkSelection)
+
+        const entry = `${req.protocol}://${req.get('host')}`
+        const paths = getAssociatedLinks(self, linkSelection, entry)
+
         res.json({ item, paths })
       } else { 
         next(createError(403))
@@ -162,7 +170,10 @@ async getUserItem(req: Request, res: Response, next: NextFunction) {
             logout: true,
             refresh: true
           }
-          const paths = getAssociatedLinks(self, linkSelection)
+
+          const entry = `${req.protocol}://${req.get('host')}`
+          const paths = getAssociatedLinks(self, linkSelection, entry)
+          
           res.sendStatus(200)
         } else {
           throw createError(403)  

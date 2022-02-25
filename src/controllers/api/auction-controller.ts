@@ -21,8 +21,8 @@ index (req: Request, res: Response, next: NextFunction) {
       login: true,
     }
 
-const paths = getAssociatedLinks(self, linkSelection)
-// console.log(paths)
+  const entry = `${req.protocol}://${req.get('host')}`
+const paths = getAssociatedLinks(self, linkSelection, entry)
 
   res.json({ message: 'Authentication operations:', links: paths })
 }
@@ -58,8 +58,8 @@ async createAuction (req: Request, res: Response, next: NextFunction) {
       login: true,
     }
 
-const paths = getAssociatedLinks(self, linkSelection)
-// console.log(paths)
+    const entry = `${req.protocol}://${req.get('host')}`
+    const paths = getAssociatedLinks(self, linkSelection, entry)
 
   res.json({ message: 'Authentication operations:', links: paths })
 }

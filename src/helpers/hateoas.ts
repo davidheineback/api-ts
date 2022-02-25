@@ -37,11 +37,13 @@ export function createSelf(url: string, method: string) {
 
 
 function setUpLinks(self: string) {
+  self.substring(self.length-1) === '/' &&  (self = self.substring(0, self.length-1))
+  
   const links = [ 
   {
     name: 'register',
     method: 'POST',
-    link: `${self}/register`,
+    link: `${self}/auth/register`,
     description: 'Register a new user.',
     bodyTemplate: {
       firstName: 'string',
@@ -53,7 +55,7 @@ function setUpLinks(self: string) {
   {
     name: 'login',
     method: 'POST',
-    link: `${self}/login`,
+    link: `${self}/auth/login`,
     description: 'Login in a excisting user.',
     bodyTemplate: {
       username: 'string',
@@ -64,14 +66,14 @@ function setUpLinks(self: string) {
     name: 'logout',
     method: 'DELETE',
     authentication: 'Bearer <Token>',
-    link: `${self}/logout`,
+    link: `${self}/auth/logout`,
     description: 'Logout user.'
   },
   {
     name: 'refresh',
     method: 'GET',
     authentication: 'Bearer <Token>',
-    link: `${self}/refresh`,
+    link: `${self}/auth/refresh`,
     description: 'Get a new accesstoken from refreshtoken'
   },
   {
@@ -145,8 +147,8 @@ return links
 }
 
 
-export function getAssociatedLinks (self: Self, linkSelection: Links) {
-  const links: Array<{[key: string]: any}> = setUpLinks(self.url)
+export function getAssociatedLinks (self: Self, linkSelection: Links, entry: string) {
+  const links: Array<{[key: string]: any}> = setUpLinks(entry)
   .filter(link => Object.keys(linkSelection).includes(link.name) && (linkSelection as any)[link.name])
   links.map((link, index) => {
     if (link.link === self.url && link.method === self.method) {
