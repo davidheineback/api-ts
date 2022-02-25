@@ -20,7 +20,7 @@ export const errorMiddleware = (err: HttpError, req: Request, res: Response, nex
     res.status(err.status).json({
       status: err.status,
       message: err.message,
-      entry: `${req.protocol}://${req.get('host')}`,
+      entry: `${req.protocol}://${req.get('host')}/api`,
       paths
     })
     return
@@ -32,7 +32,7 @@ export const errorMiddleware = (err: HttpError, req: Request, res: Response, nex
     status: err.status,
     message: err.message,
     stack: err.stack,
-    entry: `${req.protocol}://${req.get('host')}`,
+    entry: `${req.protocol}://${req.get('host')}/api`,
     paths
   })
 
