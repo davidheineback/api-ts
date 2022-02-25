@@ -1,5 +1,4 @@
 export type Links = {
-  self?: boolean
   register?: boolean
   login?: boolean
   logout?: boolean

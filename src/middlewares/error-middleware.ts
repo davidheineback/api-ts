@@ -5,8 +5,12 @@ import { createSelf, getAssociatedLinks, Links } from '../helpers/hateoas'
 export const errorMiddleware = (err: HttpError, req: Request, res: Response, next: NextFunction) => {
   err.status = err.status || 500
   const self = createSelf(`${req.protocol}://${req.get('host')}/api/auth`, req.method)
+  let refresh = false
+
+  err.status === 401 && (refresh = true)
+
   const linkSelection: Links = {
-    refresh: true,
+    refresh,
     register: true,
     login: true,
   }
@@ -16,6 +20,7 @@ export const errorMiddleware = (err: HttpError, req: Request, res: Response, nex
     res.status(err.status).json({
       status: err.status,
       message: err.message,
+      entry: `${req.protocol}://${req.get('host')}`,
       paths
     })
     return
@@ -27,6 +32,7 @@ export const errorMiddleware = (err: HttpError, req: Request, res: Response, nex
     status: err.status,
     message: err.message,
     stack: err.stack,
+    entry: `${req.protocol}://${req.get('host')}`,
     paths
   })
 
